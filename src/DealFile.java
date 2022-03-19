@@ -215,13 +215,14 @@ public class DealFile {
 
 
     public static void main(String[] args) throws IOException {
-//        String inputFile = args[0];
-//        String outputFile = args[1];
-//        String designatedProvince = args[2];
-        String inputFile = "src/yq_in_03.txt";
-        String outputFile = "src/my_yq_out_03.txt";
-        String outputFile2 = "src/my_yq_out_04.txt";
-        String designatedProvince = "";
+        String inputFile = args[0];
+        String outputFile = args[1];
+        String outputFile2 = args[2];
+        String designatedProvince = args[3];
+//        String inputFile = "src/yq_in_03.txt";
+//        String outputFile = "src/my_yq_out_03.txt";
+//        String outputFile2 = "src/my_yq_out_04.txt";
+//        String designatedProvince = "";
         DealFile rf = new DealFile(inputFile, outputFile, outputFile2);
         rf.dealTxtFile(designatedProvince);
     }
