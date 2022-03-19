@@ -63,8 +63,7 @@ public class DealFile {
 
     //  处理文件格式，输入参数依次为文件的编码格式、待处理的输入文件的路径、处理完成的输出文件的路径
     public void dealTxtFile(String designatedProvince) throws IOException {
-        ArrayList provinceDataList = null;
-        ArrayList singleDataList = null;
+        ArrayList provinceDataList = new ArrayList<>();
         try {
             File file = new File(this.inputFile);
             //  判断文件是否存在
@@ -88,7 +87,7 @@ public class DealFile {
 
                 int countFlag = 0;
 
-                provinceDataList = new ArrayList<>();
+                ArrayList singleDataList = new ArrayList<>();
                 //  缓冲区有数据就一直一行一行地读取
                 while ((lineTxt = br.readLine()) != null) {
                     //  使用空格作为分割符，将每行的字符串分割为字符串数组
@@ -103,7 +102,6 @@ public class DealFile {
                     //  将当前城市的省份进行比较，如果省份不一样了，那么将对当前省份进行替换
                     if (!currentProvince.equals(lineArray[0])) {
                         if (countFlag == 0) {
-                            singleDataList = new ArrayList<>();
                             countFlag = 1;
                         } else {
                             bw.write("总计: " + totalPeopleNum);
@@ -125,7 +123,7 @@ public class DealFile {
                     }
                     //  向缓冲区写入除了省份的其余数据
                     bw.write(lineArray[1] + "\t" + lineArray[2]);
-                    cityPeopleNum = Integer.parseInt(lineArray[2]);
+                    cityPeopleNum = Integer.valueOf(lineArray[2]);
                     totalPeopleNum += cityPeopleNum;
                     CityData cityData = new CityData(lineArray[1], cityPeopleNum);
                     singleDataList.add(cityData);
@@ -164,14 +162,11 @@ public class DealFile {
         //必须是Comparator中的compare方法和Collections.sort方法配合使用才管用
         ProvinceComparator pct = new ProvinceComparator();
         CityComparator cct = new CityComparator();
-        Comparator cmp = Collator.getInstance(java.util.Locale.CHINA);
-        Collections.sort(provinceDataList, pct);
-
-        ArrayList cityList = null;
+        provinceDataList.sort(pct);
 
         for (Object o : provinceDataList) {
             ProvinceData provinceData = (ProvinceData) o;
-            cityList = provinceData.getCityDataList();
+            ArrayList cityList = provinceData.getCityDataList();
 
             cityList.sort(cct);
             bw.write(provinceData.getProvinceName() + "\t" + provinceData.getPeopleNum());

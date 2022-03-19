@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/my_yq_out.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/my_yq_out_03.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/my_yq_out_04.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/yq_in.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/yq_in_03.txt" charset="GBK" />
+  </component>
+</project>
