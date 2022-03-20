@@ -9,10 +9,10 @@
 import java.io.*;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 
+//  实现Comparator接口，自定义比较方法，比较CityData类中的人数
 class CityComparator implements Comparator {
     public int compare(Object o1, Object o2) {
         CityData e1 = (CityData) o1;
@@ -22,11 +22,13 @@ class CityComparator implements Comparator {
         } else if (e1.getPeopleNum() > e2.getPeopleNum()) {
             return -1;
         } else {
+            //  如果人数相同则比较汉字拼音
             return Collator.getInstance(Locale.CHINESE).compare(e1.getCityName(), e2.getCityName());
         }
     }
 }
 
+//  实现Comparator接口，自定义比较方法，比较ProvinceData类中的人数
 class ProvinceComparator implements Comparator {
     public int compare(Object o1, Object o2) {
         ProvinceData e1 = (ProvinceData) o1;
@@ -36,6 +38,7 @@ class ProvinceComparator implements Comparator {
         else if (e1.getPeopleNum() > e2.getPeopleNum()) {
             return -1;
         } else {
+            //  如果人数相同则比较汉字拼音
             return Collator.getInstance(Locale.CHINESE).compare(e1.getProvinceName(), e2.getProvinceName());
         }
     }
@@ -63,6 +66,7 @@ public class DealFile {
 
     //  处理文件格式，输入参数依次为文件的编码格式、待处理的输入文件的路径、处理完成的输出文件的路径
     public void dealTxtFile(String designatedProvince) throws IOException {
+        //  所有省数据类放置与ArrayList容器
         ArrayList provinceDataList = new ArrayList<>();
         try {
             File file = new File(this.inputFile);
@@ -81,17 +85,19 @@ public class DealFile {
                 String lineTxt = null;
                 //  创建每行数据的省份字符串变量
                 String currentProvince = "0";
-
+                //  创建每个城市感染人数变量
                 int cityPeopleNum;
+                //  创建每个省份感染总人数变量
                 int totalPeopleNum = 0;
 
                 int countFlag = 0;
-
+                //  每个省所有城市数据类放置与ArrayList容器
                 ArrayList singleDataList = new ArrayList<>();
                 //  缓冲区有数据就一直一行一行地读取
                 while ((lineTxt = br.readLine()) != null) {
                     //  使用空格作为分割符，将每行的字符串分割为字符串数组
                     String[] lineArray = lineTxt.split("\\s+");
+                    // 根据指定的省份进行操作，只写入和统计指定省份的数据，如果是空串，就执行所有省份
                     if (!lineArray[0].equals(designatedProvince) && !designatedProvince.equals("")) {
                         continue;
                     }
@@ -106,7 +112,9 @@ public class DealFile {
                         } else {
                             bw.write("总计: " + totalPeopleNum);
 //                            System.out.println(currentProvince);
+                            //  省份名，总感染人数，下辖城市疫情情况实例化省份对象
                             ProvinceData provinceData = new ProvinceData(currentProvince, totalPeopleNum, singleDataList);
+                            //  将该省份数据add进容器
                             provinceDataList.add(provinceData);
                             singleDataList = new ArrayList<>();
                             totalPeopleNum = 0;
@@ -125,7 +133,9 @@ public class DealFile {
                     bw.write(lineArray[1] + "\t" + lineArray[2]);
                     cityPeopleNum = Integer.valueOf(lineArray[2]);
                     totalPeopleNum += cityPeopleNum;
+                    //  城市名，感染人数，实例化城市对象
                     CityData cityData = new CityData(lineArray[1], cityPeopleNum);
+                    //  将该城市数据add进容器
                     singleDataList.add(cityData);
                     //  写入一个换行符
                     bw.newLine();
@@ -158,23 +168,25 @@ public class DealFile {
         FileWriter fw = new FileWriter(this.outputFile2);
         //  创建文件写入缓冲区
         BufferedWriter bw = new BufferedWriter(fw);
-
-        //必须是Comparator中的compare方法和Collections.sort方法配合使用才管用
+        //  必须是Comparator中的compare方法和Collections.sort方法配合使用才管用
         ProvinceComparator pct = new ProvinceComparator();
         CityComparator cct = new CityComparator();
+        //  排序省感染总人数
         provinceDataList.sort(pct);
-
+        //  遍历实例化省份数据
         for (Object o : provinceDataList) {
             ProvinceData provinceData = (ProvinceData) o;
             ArrayList cityList = provinceData.getCityDataList();
-
+            //  排序一个省内城市感染人数
             cityList.sort(cct);
+            //  写入排序后的省份名和感染总人数
             bw.write(provinceData.getProvinceName() + "\t" + provinceData.getPeopleNum());
             //  写入一个换行符
             bw.newLine();
-
+            //  遍历实例化城市数据
             for (Object value : cityList) {
                 CityData cityData = (CityData) value;
+                //  写入排序后的城市名和感染人数
                 bw.write(cityData.getCityName() + "\t" + cityData.getPeopleNum());
                 //  写入一个换行符
                 bw.newLine();
@@ -213,6 +225,7 @@ public class DealFile {
         String inputFile = args[0];
         String outputFile = args[1];
         String outputFile2 = args[2];
+        // 简易可变长参数
         String designatedProvince = "";
         if (args.length == 4) {
             designatedProvince = args[3];
